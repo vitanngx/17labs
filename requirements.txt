@@ -1,0 +1,8 @@
+matplotlib>=3.8
+numpy>=1.26
+pandas>=2.2
+python-dotenv>=1.0
+scipy>=1.13
+vnstock>=3.2
+yfinance>=0.2.54
+
