@@ -24,6 +24,7 @@ Originally born from an exploratory notebook, this project has been refactored i
 - numpy
 - scipy
 - matplotlib
+- streamlit
 - yfinance
 - vnstock
 - python-dotenv
@@ -36,6 +37,7 @@ Originally born from an exploratory notebook, this project has been refactored i
 ├── requirements.txt
 ├── .gitignore
 ├── .env.example
+├── app.py
 ├── main.py
 ├── config.py
 ├── data/
@@ -50,6 +52,7 @@ Originally born from an exploratory notebook, this project has been refactored i
 │   ├── target_portfolio.py
 │   ├── risk_analysis.py
 │   ├── visualization.py
+│   ├── workflow.py
 │   └── utils.py
 └── images/
     └── .gitkeep
@@ -84,6 +87,12 @@ Run the default workflow:
 
 ```bash
 python main.py
+```
+
+Run the Streamlit dashboard:
+
+```bash
+streamlit run app.py
 ```
 
 Edit `config.py` to change the asset universe, risk profile, risk-free rate, simulation count, or target-return settings.

@@ -35,18 +35,21 @@ class SimulationResult:
 
 def get_weight_constraints(n_assets: int) -> tuple[float, float]:
     """Return the maximum and minimum weight per asset."""
+    if n_assets <= 1:
+        return (1.0, 1.0)
     constraints = {
         2: (0.80, 0.00),
         3: (0.60, 0.20),
         4: (0.55, 0.15),
         5: (0.50, 0.12),
         6: (0.45, 0.10),
-        7: (0.40, 0.08),
-        8: (0.35, 0.06),
-        9: (0.30, 0.04),
-        10: (0.25, 0.02),
+        7: (0.40, 0.10),
+        8: (0.35, 0.08),
+        9: (0.30, 0.06),
+        10: (0.25, 0.04),
     }
-    return constraints.get(n_assets, (1.0 / n_assets + 0.2, 0.01))
+    default_max = min(1.0, 1.0 / n_assets + 0.2)
+    return constraints.get(n_assets, (default_max, 0.01))
 
 
 def build_asset_groups(
@@ -73,6 +76,44 @@ def normalize_group_budget(
     if total <= 0:
         raise ValueError("Risk budget must allocate positive weight to active groups.")
     return {group_name: risk_budget[group_name] / total for group_name in active_groups}
+
+
+def sample_bounded_weights(
+    rng: np.random.Generator,
+    n_assets: int,
+    total_weight: float,
+    min_weight: float,
+    max_weight: float,
+) -> np.ndarray:
+    """Sample weights that sum to total_weight while respecting feasible bounds."""
+    lower_bound = min_weight
+    upper_bound = max_weight
+
+    if total_weight < n_assets * lower_bound:
+        lower_bound = 0.0
+    if total_weight > n_assets * upper_bound:
+        upper_bound = total_weight
+
+    weights = np.full(n_assets, lower_bound, dtype=float)
+    remaining = total_weight - weights.sum()
+    capacity = np.full(n_assets, upper_bound - lower_bound, dtype=float)
+
+    while remaining > 1e-12:
+        active = capacity > 1e-12
+        if not np.any(active):
+            break
+
+        increments = np.zeros(n_assets, dtype=float)
+        increments[active] = normalize(rng.random(int(active.sum()))) * remaining
+        increments = np.minimum(increments, capacity)
+        weights += increments
+        capacity -= increments
+        remaining = total_weight - weights.sum()
+
+    if abs(weights.sum() - total_weight) > 1e-8:
+        weights *= total_weight / weights.sum()
+
+    return weights
 
 
 def simulate_portfolios(
@@ -118,9 +159,14 @@ def simulate_portfolios(
         weights = np.zeros(n_assets, dtype=float)
 
         for group_name, group_tickers in active_groups.items():
-            group_weights = normalize(rng.random(len(group_tickers)))
             indices = [tickers.index(ticker) for ticker in group_tickers]
-            weights[indices] = group_weights * final_budget[group_name]
+            weights[indices] = sample_bounded_weights(
+                rng=rng,
+                n_assets=len(group_tickers),
+                total_weight=final_budget[group_name],
+                min_weight=min_weight,
+                max_weight=max_weight,
+            )
 
         if np.all(weights <= max_weight + 1e-4) and np.all(weights >= min_weight - 1e-4):
             portfolio_return = float(weights @ annual_returns.values)
@@ -161,4 +207,3 @@ def simulate_portfolios(
         total_attempts=len(weight_records) + failed_attempts,
         failed_attempts=failed_attempts,
     )
-

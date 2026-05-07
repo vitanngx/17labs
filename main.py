@@ -19,50 +19,37 @@ from config import (
     US_TICKERS,
     VN_TICKERS,
 )
-from src.asset_ranking import rank_assets_by_sharpe
-from src.data_loader import get_multi_asset_data
-from src.optimization import simulate_portfolios
-from src.risk_analysis import analyze_return_distribution
-from src.target_portfolio import select_target_return_portfolio
 from src.utils import format_weight_summary
 from src.visualization import (
     plot_asset_ranking,
     plot_return_distribution,
     plot_simulation_frontier,
 )
+from src.workflow import AnalysisConfig, run_analysis
 
 
 def main() -> None:
     """Execute the default analysis workflow."""
-    prices = get_multi_asset_data(
+    analysis_config = AnalysisConfig(
         vn_tickers=VN_TICKERS,
         us_tickers=US_TICKERS,
         crypto_tickers=CRYPTO_TICKERS,
         commodity_tickers=COMMODITY_TICKERS,
         start_date=START_DATE,
-    )
-
-    ranking = rank_assets_by_sharpe(prices, rf_rate=RISK_FREE_RATE)
-    simulation = simulate_portfolios(
-        prices=prices,
         risk_budget=RISK_PROFILES[SELECTED_PROFILE],
-        stock_tickers=VN_TICKERS + US_TICKERS,
-        crypto_tickers=CRYPTO_TICKERS,
-        commodity_tickers=COMMODITY_TICKERS,
-        rf_rate=RISK_FREE_RATE,
+        selected_profile=SELECTED_PROFILE,
+        risk_free_rate=RISK_FREE_RATE,
+        target_return=TARGET_RETURN,
+        target_tolerance=TARGET_TOLERANCE,
         num_portfolios=NUM_PORTFOLIOS,
         random_seed=RANDOM_SEED,
     )
-    target_portfolio = select_target_return_portfolio(
-        simulation=simulation,
-        target_return=TARGET_RETURN,
-        tolerance=TARGET_TOLERANCE,
-    )
-    selected_portfolio = target_portfolio or simulation.best_portfolio
-    distribution = analyze_return_distribution(
-        expected_return=selected_portfolio.expected_return,
-        volatility=selected_portfolio.volatility,
-    )
+    result = run_analysis(analysis_config)
+    prices = result.prices
+    ranking = result.ranking
+    simulation = result.simulation
+    target_portfolio = result.target_portfolio
+    distribution = result.distribution
 
     print(f"\n{PROJECT_TITLE} price matrix shape: {prices.shape}")
     print("\nAsset ranking (annualized):")
@@ -107,4 +94,3 @@ def main() -> None:
 
 if __name__ == "__main__":
     main()
-

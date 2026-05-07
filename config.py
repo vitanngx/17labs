@@ -31,6 +31,5 @@ RISK_PROFILES = {
     "Aggressive": {"Stocks": 0.30, "Crypto": 0.60, "Commodities": 0.10},
 }
 
-VNSTOCK_SOURCES = ("KBS", "VCI", "TCBS", "SSI")
+VNSTOCK_SOURCES = ("VCI", "TCBS", "SSI", "KBS")
 VNSTOCK_API_KEY = os.getenv("VNSTOCK_API_KEY", "")
-

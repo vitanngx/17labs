@@ -1,4 +1,6 @@
 .env
+.venv/
+.venv312/
 __pycache__/
 *.py[cod]
 *.so
@@ -19,4 +21,3 @@ data/*.pkl
 images/*.png
 images/*.jpg
 images/*.jpeg
-
