@@ -1,6 +1,10 @@
-# 17 LABS
+## About 17 LABS
 
-17 LABS is a quantitative portfolio optimization prototype that combines multi-asset market data, ranking, Monte Carlo simulation, and probability analysis into a simple Python workflow. The project is designed as a clean, GitHub-ready refactor of an exploratory notebook and can be used as an educational decision-support tool for experimenting with cross-asset portfolio construction.
+During my time at 52Hz, I observed a recurring pattern: many investors make decisions driven by emotion rather than data. Whether it was "going all-in" on high-risk bets or over-diversifying across dozens of assets without a clear risk strategy, the lack of a systematic approach was evident.
+
+17 LABS was built to bridge this gap. It is a quantitative prototype that replaces emotional bias with mathematical rigor. By integrating multi-asset market data, ranking systems, Monte Carlo simulations, and probability analysis into a streamlined Python workflow, it provides a scientific framework for portfolio construction.
+
+Originally born from an exploratory notebook, this project has been refactored into a clean, production-ready codebase designed for educational purposes and decision support.
 
 ## Main Features
 
@@ -91,4 +95,3 @@ The workflow first downloads close-price data and aligns it into a clean price m
 ## Disclaimer
 
 17 LABS is an educational and decision-support prototype. It is not investment advice, not a production trading system, and not a guarantee of future performance.
-
