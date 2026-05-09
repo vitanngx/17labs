@@ -22,7 +22,10 @@ def clean_price_frame(prices: pd.DataFrame) -> pd.DataFrame:
 
 def compute_daily_returns(prices: pd.DataFrame) -> pd.DataFrame:
     """Compute daily percentage returns from a price matrix."""
-    return clean_price_frame(prices).pct_change().dropna(how="all")
+    returns = clean_price_frame(prices).pct_change().dropna(how="all")
+    # Clip extreme anomalies (e.g., data glitches or junk coin pumps)
+    # Max loss: 95% per day. Max gain: 200% per day.
+    return returns.clip(lower=-0.95, upper=2.0)
 
 
 def annualize_returns(returns: pd.DataFrame, trading_days: int = 252) -> pd.Series:
