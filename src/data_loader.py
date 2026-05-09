@@ -135,6 +135,9 @@ def _download_vnstock_prices(ticker: str, start_date: str, end_date: str) -> pd.
     return pd.DataFrame()
 
 
+import streamlit as st
+
+@st.cache_data(show_spinner="Đang tải dữ liệu từ thị trường...", ttl=86400)
 def get_multi_asset_data(
     vn_tickers: list[str],
     us_tickers: list[str],
