@@ -193,18 +193,71 @@ def configure_page() -> None:
     st.markdown(
         """
         <style>
+        @import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;800&display=swap');
+        
+        html, body, [class*="css"] {
+            font-family: 'Outfit', sans-serif !important;
+        }
+        
         .block-container {
             padding-top: 2rem;
-            padding-bottom: 2rem;
+            padding-bottom: 3rem;
         }
+        
+        /* Glassmorphism Metrics */
         [data-testid="stMetric"] {
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            border-radius: 8px;
-            padding: 0.85rem 1rem;
-            background: rgba(255, 255, 255, 0.05);
+            background: rgba(255, 255, 255, 0.03) !important;
+            backdrop-filter: blur(12px) !important;
+            -webkit-backdrop-filter: blur(12px) !important;
+            border: 1px solid rgba(255, 255, 255, 0.05) !important;
+            border-top: 1px solid rgba(255, 255, 255, 0.15) !important;
+            border-left: 1px solid rgba(255, 255, 255, 0.15) !important;
+            border-radius: 20px !important;
+            padding: 1.5rem !important;
+            box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.3) !important;
+            transition: transform 0.3s ease, box-shadow 0.3s ease !important;
         }
-        h1, h2, h3 {
-            letter-spacing: 0;
+        
+        [data-testid="stMetric"]:hover {
+            transform: translateY(-5px) !important;
+            box-shadow: 0 12px 40px 0 rgba(0, 201, 255, 0.2) !important;
+            border: 1px solid rgba(255, 255, 255, 0.2) !important;
+        }
+        
+        /* Gradient Title */
+        h1 {
+            background: linear-gradient(90deg, #00C9FF 0%, #92FE9D 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            font-weight: 800 !important;
+            letter-spacing: -1px !important;
+            margin-bottom: 0 !important;
+        }
+        
+        /* Cyberpunk Button */
+        .stButton > button {
+            background: linear-gradient(135deg, #00C9FF 0%, #0B1340 100%) !important;
+            border: 1px solid rgba(0, 201, 255, 0.5) !important;
+            border-radius: 12px !important;
+            color: white !important;
+            font-weight: 600 !important;
+            padding: 0.6rem 1.2rem !important;
+            transition: all 0.3s ease !important;
+            box-shadow: 0 4px 15px rgba(0, 201, 255, 0.2) !important;
+        }
+        
+        .stButton > button:hover {
+            transform: scale(1.02) !important;
+            box-shadow: 0 6px 20px rgba(0, 201, 255, 0.5) !important;
+            border-color: #00C9FF !important;
+        }
+        
+        /* Dataframe styling */
+        [data-testid="stDataFrame"] {
+            border-radius: 16px !important;
+            overflow: hidden !important;
+            border: 1px solid rgba(255, 255, 255, 0.05) !important;
+            box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.2) !important;
         }
         </style>
         """,
@@ -220,7 +273,9 @@ def main() -> None:
     st.caption("Portfolio optimization dashboard")
 
     with st.sidebar:
-        st.image("Logo.png", use_container_width=True)
+        import os
+        logo_path = os.path.join(os.path.dirname(__file__), "Logo.jpg")
+        st.image(logo_path, use_container_width=True)
         st.header("Configuration")
         with st.form("analysis_settings"):
             vn_tickers = parse_tickers(st.text_input("Vietnam stocks", value=join_tickers(VN_TICKERS)))
